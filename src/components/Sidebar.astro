@@ -24,10 +24,10 @@ function isActive(path: string) {
 ---
 
 <aside
-	class="lg:w-64 xl:w-72 lg:shrink-0 bg-zinc-900 lg:h-screen lg:sticky lg:top-0 lg:flex lg:flex-col lg:justify-between py-6 px-6 lg:py-10 hidden relative before:hidden lg:before:block before:absolute before:inset-y-8 before:right-0 before:w-px before:bg-zinc-800/80"
+	class="lg:w-64 xl:w-72 lg:shrink-0 bg-zinc-900 lg:h-screen lg:sticky lg:top-0 lg:flex lg:flex-col py-6 px-6 lg:py-10 hidden relative before:hidden lg:before:block before:absolute before:inset-y-8 before:right-0 before:w-px before:bg-zinc-800/80"
 >
 	<!-- Desktop Sidebar -->
-	<div class="space-y-10">
+	<div class="space-y-8">
 		<div class="flex items-center gap-3 px-1">
 			<a
 				href="/"
@@ -37,6 +37,8 @@ function isActive(path: string) {
 			<ThemePicker client:load />
 		</div>
 
+		<div class="h-px bg-zinc-800/50 mx-4"></div>
+
 		<div class="px-1">
 			<p class="text-[0.95rem] text-zinc-400 leading-relaxed pr-2">
 				I'm <a href="/"><span class="text-primary font-medium">Savitha</span></a
@@ -44,6 +46,8 @@ function isActive(path: string) {
 				garden 🌱.
 			</p>
 		</div>
+
+		<div class="h-px bg-zinc-800/50 mx-4"></div>
 
 		<nav>
 			<ul class="space-y-2 font-medium text-[0.95rem] text-zinc-300">
@@ -104,41 +108,42 @@ function isActive(path: string) {
 				</li>
 			</ul>
 		</nav>
-	</div>
 
-	<div class="mt-12 lg:mt-0 px-1">
-		<h3 class="text-sm font-bold text-zinc-100 mb-4">Stay Connected</h3>
-		<ul class="space-y-2 text-[0.95rem] text-zinc-400">
-			<li>
-				<a
-					href="https://twitter.com/gsavitha_"
-					class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
-				>
-					<Twitter
-						class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
-					/> Twitter / X
-				</a>
-			</li>
-			<li>
-				<a
-					href="https://github.com/g-savitha"
-					class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
-				>
-					<Github
-						class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
-					/> GitHub
-				</a>
-			</li>
-			<li>
-				<a
-					href="https://www.linkedin.com/in/g-savitha/"
-					class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
-				>
-					<Linkedin
-						class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
-					/> LinkedIn
-				</a>
-			</li>
+		<div class="h-px bg-zinc-800/50 mx-4"></div>
+
+		<div class="px-1">
+			<h3 class="text-sm font-bold text-zinc-100 mb-4">Stay Connected</h3>
+			<ul class="space-y-2 text-[0.95rem] text-zinc-400">
+				<li>
+					<a
+						href="https://twitter.com/gsavitha_"
+						class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
+					>
+						<Twitter
+							class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
+						/> Twitter / X
+					</a>
+				</li>
+				<li>
+					<a
+						href="https://github.com/g-savitha"
+						class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
+					>
+						<Github
+							class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
+						/> GitHub
+					</a>
+				</li>
+				<li>
+					<a
+						href="https://www.linkedin.com/in/g-savitha/"
+						class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
+					>
+						<Linkedin
+							class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
+						/> LinkedIn
+					</a>
+				</li>
 			<li>
 				<a
 					href="https://takeuforward.org/profile/gsavitha"
@@ -171,6 +176,7 @@ function isActive(path: string) {
 			</li>
 		</ul>
 	</div>
+</div>
 </aside>
 
 <!-- Mobile Header -->
