@@ -53,18 +53,18 @@ export default function ThemePicker() {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-7 h-7 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full"
-        aria-label="Theme picker"
-        aria-haspopup="true"
-        aria-expanded={isOpen}
-      >
-        <span 
-          className="w-3.5 h-3.5 rounded-full shadow-inner border border-white/10" 
-          style={{ backgroundColor: activeColor }}
-        />
-      </button>
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="flex items-center justify-center w-7 h-7 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-full cursor-pointer"
+          aria-label="Theme picker"
+          aria-haspopup="true"
+          aria-expanded={isOpen}
+        >
+          <span 
+            className="w-3.5 h-3.5 rounded-full shadow-inner border border-white/10" 
+            style={{ backgroundColor: activeColor }}
+          />
+        </button>
 
       {isOpen && (
         <div 
@@ -77,7 +77,7 @@ export default function ThemePicker() {
               <li key={name} role="none">
                 <button
                   onClick={() => setTheme(name)}
-                  className={`w-5 h-5 rounded-full transition-transform hover:scale-110 shadow-inner block ${activeTheme === name ? 'ring-2 ring-white ring-offset-2 ring-offset-[rgb(30,30,33)]' : 'border border-white/5'}`}
+                  className={`w-5 h-5 rounded-full transition-transform hover:scale-110 shadow-inner block cursor-pointer ${activeTheme === name ? 'ring-2 ring-white ring-offset-2 ring-offset-[rgb(30,30,33)]' : 'border border-white/5'}`}
                   style={{ backgroundColor: theme.primary }}
                   aria-label={`Select ${name} theme`}
                   role="menuitem"
