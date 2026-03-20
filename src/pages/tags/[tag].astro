@@ -1,0 +1,48 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog', ({ data }) => import.meta.env.PROD ? data.draft !== true : true);
+  const uniqueTags = [...new Set(allPosts.map((post) => post.data.tags || []).flat())];
+
+  return uniqueTags.map((tag) => {
+    const filteredPosts = allPosts.filter((post) => post.data.tags?.includes(tag));
+    return {
+      params: { tag },
+      props: { posts: filteredPosts },
+    };
+  });
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<PageLayout title={`${tag} - ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+    <div class="mb-12 border-b border-zinc-800/80 pb-8">
+        <h1 class="text-3xl font-bold tracking-tight text-white mb-2">
+            Posts tagged "<span class="text-primary">{tag}</span>"
+        </h1>
+    </div>
+    
+    <ul class="flex flex-col">
+        {posts.map(post => (
+            <li class="border-b border-zinc-800/80 last:border-0">
+                <a href={`/blog/${post.id}`} class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-lg hover:bg-zinc-800/60 transition-colors group">
+                    <span class="text-zinc-400 group-hover:text-zinc-200 text-[0.95rem] font-mono shrink-0 w-32 mt-1 sm:mt-0 transition-colors">
+                        <FormattedDate date={post.data.date} />
+                    </span>
+                    <div>
+                        <span class="text-primary group-hover:text-primary-hover font-medium transition-colors text-xl mb-2 block">
+                            {post.data.title}
+                        </span>
+                    </div>
+                </a>
+            </li>
+        ))}
+    </ul>
+</PageLayout>

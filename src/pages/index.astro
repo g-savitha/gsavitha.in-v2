@@ -1,0 +1,173 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../layouts/PageLayout.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import { User, Mail, FolderOpen, FileText, PenBox } from 'lucide-astro';
+
+const posts = (
+    await getCollection('blog', ({ data }) =>
+        import.meta.env.PROD ? data.draft !== true : true,
+    )
+)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+    .slice(0, 5);
+
+const papers = (await getCollection('papers'))
+    .sort(
+        (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
+    )
+    .slice(0, 5);
+---
+
+<PageLayout>
+    <!-- Hero Profile Section -->
+    <section
+        class="flex flex-col-reverse sm:flex-row gap-8 sm:gap-12 items-start justify-between mb-20"
+    >
+        <div class="flex-1">
+            <h1
+                class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-6 font-outfit"
+            >
+                Hello World 👋!
+            </h1>
+
+            <div
+                class="prose prose-lg prose-invert prose-zinc text-zinc-300 leading-relaxed mb-8 max-w-2xl"
+            >
+                <p>
+                    I'm a <span class="text-white font-medium"
+                        >curious and passionate</span
+                    > software developer and problem solver. I love <a
+                        href="https://github.com/g-savitha"
+                        class="text-primary hover:text-primary-hover"
+                        >building things</a
+                    >, creating new stuff, and exploring the frontiers of
+                    technology. I'm also a <span class="text-zinc-200"
+                        >nature enthusiast 🌼 and hobbyist photographer 📸</span
+                    >. I frequently write about <a
+                        href="/blog"
+                        class="text-primary hover:text-primary-hover"
+                        >stuff I feel curious about</a
+                    >!
+                </p>
+            </div>
+
+            <div class="flex flex-wrap gap-4">
+                <a
+                    href="/about"
+                    class="px-5 py-2.5 flex items-center gap-2.5 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-[0.95rem] font-medium text-zinc-200 hover:text-white transition-all shadow-sm group"
+                >
+                    <User
+                        class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-colors"
+                    /> About Me
+                </a>
+                <!-- <a
+                    href="/rss.xml"
+                    class="px-5 py-2.5 flex items-center gap-2.5 bg-zinc-800/40 hover:bg-zinc-800 border border-zinc-700/80 rounded-xl text-[0.95rem] font-medium text-zinc-200 hover:text-white transition-all shadow-sm group"
+                >
+                    <Mail
+                        class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-colors"
+                    /> Email Newsletter
+                </a> -->
+            </div>
+        </div>
+
+        <div class="relative w-32 h-32 sm:w-48 sm:h-48 shrink-0 group">
+            <div
+                class="absolute inset-0 bg-primary/20 rounded-full blur-xl group-hover:bg-primary/40 group-hover:blur-2xl transition-all duration-700 -z-10 animate-pulse"
+            >
+            </div>
+
+            <div
+                class="w-full h-full rounded-full p-1 bg-gradient-to-tr from-primary/10 via-primary/30 to-primary/10 border-2 border-primary/20 backdrop-blur-sm shadow-xl shadow-primary/20 overflow-hidden transform transition-all duration-500 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:rotate-3"
+            >
+                <img
+                    src="/image.png"
+                    alt="Profile"
+                    class="w-full h-full object-cover rounded-full transition-transform duration-700 group-hover:scale-110 group-hover:rotate-[-3deg]"
+                />
+            </div>
+
+            <div
+                class="absolute -top-4 -right-4 w-8 h-8 bg-primary/30 rounded-full blur-md animate-ping"
+                style="animation-duration: 3s;"
+            >
+            </div>
+            <div
+                class="absolute -bottom-4 -left-2 w-6 h-6 bg-primary/40 rounded-full blur-sm animate-pulse"
+                style="animation-duration: 4s;"
+            >
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="mb-20">
+        <div class="mb-8">
+            <h2
+                class="text-3xl font-bold font-outfit text-white mb-2 flex items-center gap-3"
+            >
+                <PenBox class="w-7 h-7 text-zinc-500" /> Writings
+            </h2>
+            <p class="text-zinc-400">Things that I've written recently</p>
+        </div>
+
+        <ul class="flex flex-col">
+            {
+                posts.map((post) => (
+                    <li class="border-b border-zinc-800/80 last:border-0">
+                        <a
+                            href={`/blog/${post.id}`}
+                            class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-lg hover:bg-zinc-800/60 transition-colors group"
+                        >
+                            <span class="text-zinc-400 group-hover:text-zinc-200 text-sm font-mono shrink-0 w-32 transition-colors">
+                                <FormattedDate date={post.data.date} />
+                            </span>
+                            <span class="text-primary group-hover:text-primary-hover font-medium font-outfit transition-colors text-lg line-clamp-2">
+                                {post.data.title}
+                            </span>
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </section>
+
+    <!-- Papers Section -->
+    <section>
+        <div class="mb-8">
+            <h2
+                class="text-3xl font-bold font-outfit text-white mb-2 flex items-center gap-3"
+            >
+                <FileText class="w-7 h-7 text-zinc-500" /> Notes
+            </h2>
+            <p class="text-zinc-400">Things that I've read recently</p>
+        </div>
+
+        <ul class="flex flex-col">
+            {
+                papers.map((paper) => (
+                    <li class="border-b border-zinc-800/80 last:border-0">
+                        <a
+                            href={paper.data.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-lg hover:bg-zinc-800/60 transition-colors group"
+                        >
+                            <span class="text-zinc-400 group-hover:text-zinc-200 text-sm font-mono shrink-0 w-32 transition-colors">
+                                {paper.data.date ? (
+                                    <FormattedDate date={paper.data.date} />
+                                ) : (
+                                    'Recent'
+                                )}
+                            </span>
+                            <span class="text-primary group-hover:text-primary-hover font-medium font-outfit transition-colors text-lg line-clamp-2">
+                                {paper.data.title}
+                            </span>
+                        </a>
+                    </li>
+                ))
+            }
+        </ul>
+    </section>
+</PageLayout>

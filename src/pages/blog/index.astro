@@ -1,0 +1,105 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('blog', ({ data }) => import.meta.env.PROD ? data.draft !== true : true)).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<PageLayout title={`Blog | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+    <div class="mb-12 border-b border-zinc-800/80 pb-8">
+        <h1
+            class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4"
+        >
+            Blog
+        </h1>
+        <p class="text-lg text-zinc-400 mb-6">
+            Guides, references, and tutorials on programming, web development, and design. 
+            <a href="/tags" class="text-primary hover:text-primary-hover transition-colors font-medium">View all topics.</a>
+        </p>
+
+        <div class="relative max-w-sm">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-zinc-400">🔍</span>
+            </div>
+            <input 
+                type="text" 
+                id="search-input"
+                placeholder={`Search ${posts.length} posts...`}
+                class="block w-full pl-10 pr-3 py-2.5 border border-zinc-700/80 rounded-xl leading-5 bg-zinc-900/50 text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all sm:text-[0.95rem]"
+            />
+        </div>
+    </div>
+
+    <ul class="flex flex-col" id="posts-list">
+        {
+            posts.map((post) => (
+                <li 
+                    class="border-b border-zinc-800/80 last:border-0 post-item"
+                    data-title={post.data.title.toLowerCase()}
+                    data-raw-title={post.data.title}
+                >
+                    <a
+                        href={`/blog/${post.id}`}
+                        class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-lg hover:bg-zinc-800/60 transition-colors group"
+                    >
+                        <span class="text-zinc-400 group-hover:text-zinc-200 text-[0.95rem] font-mono shrink-0 w-32 mt-1 sm:mt-0 transition-colors">
+                            <FormattedDate date={post.data.date} />
+                        </span>
+                        <div>
+                            <span class="text-primary group-hover:text-primary-hover font-medium transition-colors text-xl mb-2 block post-title">
+                                {post.data.title}
+                            </span>
+                            {post.data.description && (
+                                <p class="text-zinc-400 group-hover:text-zinc-300 text-[0.95rem] line-clamp-2 leading-relaxed max-w-2xl transition-colors">
+                                    {post.data.description}
+                                </p>
+                            )}
+                        </div>
+                    </a>
+                </li>
+            ))
+        }
+    </ul>
+</PageLayout>
+
+<script>
+    const searchInput = document.getElementById('search-input');
+    const postsList = document.getElementById('posts-list');
+    
+    if (searchInput && postsList) {
+        const posts = postsList.querySelectorAll('.post-item');
+        
+        searchInput.addEventListener('input', (e) => {
+            const target = e.target as HTMLInputElement;
+            const term = target.value.toLowerCase();
+            
+            posts.forEach((post) => {
+                const titleLower = post.getAttribute('data-title') || '';
+                const rawTitle = post.getAttribute('data-raw-title') || '';
+                const titleEl = post.querySelector('.post-title');
+                const el = post as HTMLElement;
+                
+                if (titleLower.includes(term)) {
+                    el.style.display = '';
+                    
+                    if (term && titleEl) {
+                        const regex = new RegExp(`(${term})`, 'gi');
+                        titleEl.innerHTML = rawTitle.replace(
+                            regex, 
+                            `<mark class="bg-primary text-zinc-900 rounded-[3px] px-1">$1</mark>`
+                        );
+                    } else if (titleEl) {
+                        titleEl.textContent = rawTitle;
+                    }
+                } else {
+                    el.style.display = 'none';
+                    if (titleEl) titleEl.textContent = rawTitle;
+                }
+            });
+        });
+    }
+</script>

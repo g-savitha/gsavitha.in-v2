@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+
+const papers = (await getCollection('papers')).sort(
+    (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
+);
+---
+
+<PageLayout
+    title={`Notes & Papers | ${SITE_TITLE}`}
+    description={SITE_DESCRIPTION}
+>
+    <div class="mb-12 border-b border-zinc-800/80 pb-8">
+        <h1
+            class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-4"
+        >
+            Notes
+        </h1>
+        <p class="text-lg text-zinc-400 max-w-2xl">
+            Every week I go down a new technical rabbit hole. This is a
+            collection of the most amusing and fascinating concepts I've
+            researched.
+        </p>
+    </div>
+
+    <ul class="flex flex-col">
+        {
+            papers.map((paper) => (
+                <li class="border-b border-zinc-800/80 last:border-0">
+                    <a
+                        href={paper.data.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 py-3 -mx-3 px-3 rounded-lg hover:bg-zinc-800/60 transition-colors group"
+                    >
+                        <span class="text-zinc-400 group-hover:text-zinc-200 text-[0.95rem] font-mono shrink-0 w-32 mt-1 sm:mt-0 transition-colors">
+                            {paper.data.date ? (
+                                <FormattedDate date={paper.data.date} />
+                            ) : (
+                                'Recent'
+                            )}
+                        </span>
+                        <div>
+                            <span class="text-primary group-hover:text-primary-hover font-medium transition-colors text-xl mb-2 block">
+                                {paper.data.title}
+                            </span>
+                        </div>
+                    </a>
+                </li>
+            ))
+        }
+    </ul>
+</PageLayout>

@@ -1,0 +1,74 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@font-face {
+  font-family: 'Dank Mono';
+  src: url('/fonts/DankMono/Dank%20Mono%20Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Dank Mono';
+  src: url('/fonts/DankMono/Dank%20Mono%20Italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@theme {
+  --color-primary: var(--theme-color);
+  --color-primary-hover: var(--theme-color-hover);
+  --font-mono: 'Dank Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-outfit: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-sacramento: 'Sacramento', cursive;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --theme-color: #60a5fa;
+    --theme-color-hover: #93c5fd;
+  }
+
+  body {
+    @apply bg-zinc-900 text-zinc-300 antialiased selection:bg-zinc-700/50 selection:text-zinc-100;
+    font-family: 'Overlock', system-ui, -apple-system, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-outfit text-zinc-100 font-semibold tracking-tight;
+  }
+
+  a {
+    @apply font-outfit text-zinc-200 hover:text-white transition-colors duration-200 hover:no-underline;
+  }
+  
+  /* Enable ligatures for code blocks globally */
+  pre, code {
+    font-family: var(--font-mono);
+    font-variant-ligatures: normal;
+  }
+
+  /* Target shiki comments specifically to enforce italics,
+     using the github-dark comment color (#8b949e) and dark+ (#6A9955) */
+  .prose pre span[style*="#8b949e" i],
+  .prose pre span[style*="#8B949E" i],
+  .prose pre span[style*="#6a9955" i],
+  .prose pre span[style*="#6A9955" i],
+  .prose pre span[style*="italic" i] {
+    font-style: italic !important;
+  }
+}
+
+@layer utilities {
+  .prose {
+    @apply prose-invert prose-zinc max-w-none prose-headings:font-outfit prose-a:font-outfit prose-a:font-medium prose-a:text-primary prose-a:underline prose-a:underline-offset-4 prose-a:decoration-primary/40 hover:prose-a:no-underline hover:prose-a:text-primary-hover prose-headings:text-zinc-100 prose-code:text-zinc-200 prose-pre:bg-zinc-900/80 prose-pre:border prose-pre:border-zinc-800;
+  }
+}

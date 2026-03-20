@@ -1,0 +1,165 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import PageLayout from './PageLayout.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import TableOfContents from '../components/TableOfContents.tsx';
+
+type Props = CollectionEntry<'blog'>['data'] & { 
+    headings?: any[];
+    prevPost?: CollectionEntry<'blog'> | null;
+    nextPost?: CollectionEntry<'blog'> | null;
+    recentPosts?: CollectionEntry<'blog'>[];
+};
+
+const {
+    title,
+    description,
+    date,
+    updatedDate,
+    headings = [],
+    tags = [],
+    prevPost = null,
+    nextPost = null,
+    recentPosts = [],
+} = Astro.props;
+---
+
+<PageLayout title={title} description={description}>
+    <div
+        class="xl:grid xl:grid-cols-[1fr_260px] lg:gap-12 xl:gap-20 items-start"
+    >
+        <article
+            class="prose prose-lg prose-invert prose-zinc max-w-none text-zinc-300 leading-relaxed min-w-0 pb-16"
+        >
+            <div class="mb-12 border-b border-zinc-800/80 pb-10 not-prose">
+                <a
+                    href="/blog"
+                    class="inline-flex items-center gap-1 text-sm text-zinc-500 hover:text-primary transition-colors mb-6"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"></path>
+                    </svg>
+                    All Posts
+                </a>
+                <h1
+                    class="text-4xl sm:text-[2.75rem] font-bold tracking-tight text-white mb-6 font-outfit leading-tight"
+                >
+                    {title}
+                </h1>
+
+                <div
+                    class="flex flex-wrap items-center gap-4 text-[0.95rem] text-zinc-400 font-medium mb-6"
+                >
+                    <FormattedDate date={date} />
+                    {
+                        updatedDate && (
+                            <span>
+                                (Updated <FormattedDate date={updatedDate} />)
+                            </span>
+                        )
+                    }
+                </div>
+
+                {
+                    tags && tags.length > 0 && (
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            {tags.map((tag: string) => (
+                                <a
+                                    href={`/tags/${tag}`}
+                                    class="px-3 py-1 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-800 rounded-md text-[0.85rem] text-zinc-300 font-medium transition-colors"
+                                >
+                                    {tag}
+                                </a>
+                            ))}
+                        </div>
+                    )
+                }
+            </div>
+
+            <!-- Mobile inline TOC (collapsible) -->
+            {
+                headings.length > 0 && (
+                    <div class="xl:hidden mb-10 border border-zinc-800/50 rounded-xl px-5 py-4 not-prose">
+                        <TableOfContents
+                            headings={headings}
+                            isMobile={true}
+                            client:media="(max-width: 1279px)"
+                        />
+                    </div>
+                )
+            }
+
+            <!-- Main Content Slot -->
+            <slot />
+
+            <!-- See Also Section -->
+            {recentPosts.length > 0 && (
+                <div class="mt-20 pt-8 not-prose">
+                    <div class="flex flex-col items-center justify-center mb-10">
+                        <div class="h-1 w-32 bg-zinc-700/80 mb-3"></div>
+                        <h2 class="text-3xl sm:text-4xl font-bold font-outfit text-white mb-3">See Also</h2>
+                        <div class="h-1 w-32 bg-zinc-700/80"></div>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <ul class="space-y-3 list-none p-0 inline-block text-left">
+                            {recentPosts.map((p: any) => (
+                                <li class="flex items-start gap-4">
+                                    <span class="text-zinc-300 mt-1">•</span>
+                                    <a href={`/blog/${p.id}`} class="text-[1.05rem] text-primary hover:text-primary-hover hover:underline transition-colors font-medium">
+                                        {p.data.title}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            )}
+
+            <!-- Post Navigation -->
+            {(prevPost || nextPost) && (
+                <div class="mt-24 pt-8 border-t border-zinc-800/80 flex flex-col sm:flex-row items-center justify-between gap-8 not-prose">
+                    {prevPost ? (
+                        <a href={`/blog/${prevPost.id}`} class="flex items-center gap-3 text-primary hover:text-primary-hover transition-colors group w-full sm:w-1/2">
+                            <div class="w-10 h-10 rounded-full bg-zinc-800/40 border border-zinc-700/50 flex items-center justify-center group-hover:bg-zinc-800 transition-colors shrink-0">
+                                <span class="text-xl text-zinc-400 group-hover:text-white transition-colors">←</span>
+                            </div>
+                            <span class="font-medium text-[1.05rem] truncate">{prevPost.data.title}</span>
+                        </a>
+                    ) : <div class="hidden sm:block sm:w-1/2"></div>}
+
+                    {nextPost ? (
+                        <a href={`/blog/${nextPost.id}`} class="flex items-center gap-3 text-primary hover:text-primary-hover transition-colors group w-full sm:w-1/2 text-right justify-end ml-auto">
+                            <span class="font-medium text-[1.05rem] truncate">{nextPost.data.title}</span>
+                            <div class="w-10 h-10 rounded-full bg-zinc-800/40 border border-zinc-700/50 flex items-center justify-center group-hover:bg-zinc-800 transition-colors shrink-0">
+                                <span class="text-xl text-zinc-400 group-hover:text-white transition-colors">→</span>
+                            </div>
+                        </a>
+                    ) : <div class="hidden sm:block sm:w-1/2"></div>}
+                </div>
+            )}
+        </article>
+
+        <!-- Desktop sticky TOC -->
+        {
+            headings.length > 0 && (
+                <aside class="hidden xl:block sticky top-24 shrink-0 -mt-2">
+                    <TableOfContents
+                        headings={headings}
+                        client:media="(min-width: 1280px)"
+                    />
+                </aside>
+            )
+        }
+    </div>
+
+    <script>
+        import mermaid from 'mermaid';
+        document.addEventListener('DOMContentLoaded', () => {
+            mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+            mermaid
+                .run({ nodes: document.querySelectorAll('.mermaid') })
+                .catch(() => {});
+        });
+    </script>
+</PageLayout>
