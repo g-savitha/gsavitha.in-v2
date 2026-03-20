@@ -12,6 +12,8 @@ interface Props {
 	image?: ImageMetadata;
 }
 
+import { THEMES } from '../utils/themes';
+
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const { title, description, image = FallbackImage } = Astro.props;
@@ -39,20 +41,13 @@ const { title, description, image = FallbackImage } = Astro.props;
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Overlock:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Sacramento&display=swap" rel="stylesheet">
 <title>{title}</title>
-<script is:inline>
+<script is:inline define:vars={{ themeDef: THEMES }}>
   (function() {
-    const themes = {
-      pink: { c: '#f472b6', h: '#f9a8d4' },
-      purple: { c: '#c084fc', h: '#d8b4fe' },
-      yellow: { c: '#facc15', h: '#fde047' },
-      green: { c: '#4ade80', h: '#86efac' },
-      blue: { c: '#60a5fa', h: '#93c5fd' }
-    };
     try {
       const saved = localStorage.getItem('theme-color');
-      if (saved && themes[saved]) {
-        document.documentElement.style.setProperty('--theme-color', themes[saved].c);
-        document.documentElement.style.setProperty('--theme-color-hover', themes[saved].h);
+      if (saved && themeDef[saved]) {
+        document.documentElement.style.setProperty('--theme-color', themeDef[saved].primary);
+        document.documentElement.style.setProperty('--theme-color-hover', themeDef[saved].hover);
       }
     } catch(e) {}
   })();

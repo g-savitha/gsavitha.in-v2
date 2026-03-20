@@ -1,16 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
 import PageLayout from '../layouts/PageLayout.astro';
+import { Image } from 'astro:assets';
+import ProfileImage from '../assets/image.png';
 import FormattedDate from '../components/FormattedDate.astro';
-import { User, Mail, FolderOpen, FileText, PenBox } from 'lucide-astro';
+import { User, FileText, PenBox } from 'lucide-astro';
+import { USER_NAME } from '../consts';
 
-const posts = (
-    await getCollection('blog', ({ data }) =>
-        import.meta.env.PROD ? data.draft !== true : true,
-    )
-)
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-    .slice(0, 5);
+import { getRecentPosts, filterDrafts } from '../utils/content';
+
+const allPosts = await getCollection('blog');
+const posts = getRecentPosts(filterDrafts(allPosts), undefined, 5);
 
 const papers = (await getCollection('papers'))
     .sort(
@@ -35,7 +35,7 @@ const papers = (await getCollection('papers'))
                 class="prose prose-lg prose-invert prose-zinc text-zinc-300 leading-relaxed mb-8 max-w-2xl"
             >
                 <p>
-                    I'm a <span class="text-white font-medium"
+                    I'm <span class="text-white font-medium">{USER_NAME}</span>, a <span class="text-white font-medium"
                         >curious and passionate</span
                     > software developer and problem solver. I love <a
                         href="https://github.com/g-savitha"
@@ -81,8 +81,8 @@ const papers = (await getCollection('papers'))
             <div
                 class="w-full h-full rounded-full p-1 bg-gradient-to-tr from-primary/10 via-primary/30 to-primary/10 border-2 border-primary/20 backdrop-blur-sm shadow-xl shadow-primary/20 overflow-hidden transform transition-all duration-500 group-hover:scale-[1.05] group-hover:-translate-y-2 group-hover:rotate-3"
             >
-                <img
-                    src="/image.png"
+                <Image
+                    src={ProfileImage}
                     alt="Profile"
                     class="w-full h-full object-cover rounded-full transition-transform duration-700 group-hover:scale-110 group-hover:rotate-[-3deg]"
                 />

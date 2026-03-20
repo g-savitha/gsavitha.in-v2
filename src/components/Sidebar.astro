@@ -1,32 +1,33 @@
 ---
-import { SITE_TITLE } from '../consts';
+/**
+ * Sidebar component providing navigation and social links.
+ * Unified for both desktop (aside) and mobile (drawer) views.
+ */
+import { SITE_TITLE, NAV_LINKS, SOCIAL_LINKS } from '../consts';
 import ThemePicker from './ThemePicker.tsx';
-import {
-	BookOpen,
-	PenTool,
-	User,
-	Award,
-	Sparkles,
-	Twitter,
-	Github,
-	Rss,
-	Linkedin,
-	Terminal,
-	Mail,
-} from 'lucide-astro';
+import ErrorBoundary from './ErrorBoundary.tsx';
+import * as Icons from 'lucide-astro';
 
 const pathname = Astro.url.pathname;
+
+/**
+ * Checks if a given path is the currently active one.
+ * @param path The path to check against the current URL.
+ */
 function isActive(path: string) {
 	if (path === '/' && pathname === '/') return true;
 	if (path !== '/' && pathname.startsWith(path)) return true;
 	return false;
 }
+
+// Map icon names to Lucide components
+const NavIcons = Icons as any;
 ---
 
 <aside
 	class="lg:w-64 xl:w-72 lg:shrink-0 bg-zinc-900 lg:h-screen lg:sticky lg:top-0 lg:flex lg:flex-col py-6 px-6 lg:py-10 hidden relative before:hidden lg:before:block before:absolute before:inset-y-8 before:right-0 before:w-px before:bg-zinc-800/80"
 >
-	<!-- Desktop Sidebar -->
+	<!-- Desktop Sidebar Content -->
 	<div class="space-y-8">
 		<div class="flex items-center gap-3 px-1">
 			<a
@@ -34,7 +35,9 @@ function isActive(path: string) {
 				class={`text-2xl font-bold pb-1 font-sacramento text-white hover:text-primary transition-colors flex-grow truncate inline-block ${pathname === '/' ? 'typing-effect' : ''}`}
 				>{SITE_TITLE}</a
 			>
-			<ThemePicker client:load />
+			<ErrorBoundary client:load>
+				<ThemePicker client:load />
+			</ErrorBoundary>
 		</div>
 
 		<div class="h-px bg-zinc-800/50 mx-4"></div>
@@ -49,137 +52,57 @@ function isActive(path: string) {
 
 		<div class="h-px bg-zinc-800/50 mx-4"></div>
 
+		<!-- Main Navigation -->
 		<nav>
 			<ul class="space-y-2 font-medium text-[0.95rem] text-zinc-300">
-				<li>
-					<a
-						href="/blog"
-						class={`flex items-center gap-3 px-4 py-2.5 -mx-4 rounded-xl transition-colors hover:bg-zinc-800/40 group ${isActive('/blog') ? 'text-primary bg-zinc-800/30' : 'hover:text-primary'}`}
-					>
-						<PenTool
-							class={`w-5 h-5 transition-colors ${isActive('/blog') ? 'text-primary' : 'text-zinc-500 group-hover:text-primary'}`}
-						/>
-						Blog
-					</a>
-				</li>
-				<li>
-					<a
-						href="/papers"
-						class={`flex items-center gap-3 px-4 py-2.5 -mx-4 rounded-xl transition-colors hover:bg-zinc-800/40 group ${isActive('/papers') ? 'text-primary bg-zinc-800/30' : 'hover:text-primary'}`}
-					>
-						<BookOpen
-							class={`w-5 h-5 transition-colors ${isActive('/papers') ? 'text-primary' : 'text-zinc-500 group-hover:text-primary'}`}
-						/>
-						Notes
-					</a>
-				</li>
-				<li>
-					<a
-						href="/certifications"
-						class={`flex items-center gap-3 px-4 py-2.5 -mx-4 rounded-xl transition-colors hover:bg-zinc-800/40 group ${isActive('/certifications') ? 'text-primary bg-zinc-800/30' : 'hover:text-primary'}`}
-					>
-						<Award
-							class={`w-5 h-5 transition-colors ${isActive('/certifications') ? 'text-primary' : 'text-zinc-500 group-hover:text-primary'}`}
-						/>
-						Certifications
-					</a>
-				</li>
-				<li>
-					<a
-						href="/goodies"
-						class={`flex items-center gap-3 px-4 py-2.5 -mx-4 rounded-xl transition-colors hover:bg-zinc-800/40 group ${isActive('/goodies') ? 'text-primary bg-zinc-800/30' : 'hover:text-primary'}`}
-					>
-						<Sparkles
-							class={`w-5 h-5 transition-colors ${isActive('/goodies') ? 'text-primary' : 'text-zinc-500 group-hover:text-primary'}`}
-						/>
-						Goodies
-					</a>
-				</li>
-				<li>
-					<a
-						href="/about"
-						class={`flex items-center gap-3 px-4 py-2.5 -mx-4 rounded-xl transition-colors hover:bg-zinc-800/40 group ${isActive('/about') ? 'text-primary bg-zinc-800/30' : 'hover:text-primary'}`}
-					>
-						<User
-							class={`w-5 h-5 transition-colors ${isActive('/about') ? 'text-primary' : 'text-zinc-500 group-hover:text-primary'}`}
-						/>
-						About Me
-					</a>
-				</li>
+				{NAV_LINKS.map((link) => {
+					const Icon = NavIcons[link.icon];
+					const active = isActive(link.href);
+					return (
+						<li>
+							<a
+								href={link.href}
+								class={`flex items-center gap-3 px-4 py-2.5 -mx-4 rounded-xl transition-colors hover:bg-zinc-800/40 group ${active ? 'text-primary bg-zinc-800/30' : 'hover:text-primary'}`}
+							>
+								{Icon && <Icon
+									class={`w-5 h-5 transition-colors ${active ? 'text-primary' : 'text-zinc-500 group-hover:text-primary'}`}
+								/>}
+								{link.label}
+							</a>
+						</li>
+					);
+				})}
 			</ul>
 		</nav>
 
 		<div class="h-px bg-zinc-800/50 mx-4"></div>
 
+		<!-- Social Links -->
 		<div class="px-1">
 			<h3 class="text-sm font-bold text-zinc-100 mb-4">Stay Connected</h3>
 			<ul class="space-y-2 text-[0.95rem] text-zinc-400">
-				<li>
-					<a
-						href="https://twitter.com/gsavitha_"
-						class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
-					>
-						<Twitter
-							class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
-						/> Twitter / X
-					</a>
-				</li>
-				<li>
-					<a
-						href="https://github.com/g-savitha"
-						class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
-					>
-						<Github
-							class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
-						/> GitHub
-					</a>
-				</li>
-				<li>
-					<a
-						href="https://www.linkedin.com/in/g-savitha/"
-						class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
-					>
-						<Linkedin
-							class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
-						/> LinkedIn
-					</a>
-				</li>
-			<li>
-				<a
-					href="https://takeuforward.org/profile/gsavitha"
-					class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
-				>
-					<Terminal
-						class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
-					/> TakeUForward
-				</a>
-			</li>
-			<li>
-				<a
-					href="mailto:gsavitha@protonmail.com"
-					class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
-				>
-					<Mail
-						class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
-					/> Email
-				</a>
-			</li>
-			<li>
-				<a
-					href="/rss.xml"
-					class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
-				>
-					<Rss
-						class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors"
-					/> RSS Feed
-				</a>
-			</li>
-		</ul>
+				{SOCIAL_LINKS.map((link) => {
+					const Icon = NavIcons[link.icon];
+					return (
+						<li>
+							<a
+								href={link.href}
+								class="flex items-center gap-3 px-3 py-2 -mx-3 rounded-lg transition-colors hover:bg-zinc-800/40 hover:text-primary group"
+								target={link.href.startsWith('http') ? "_blank" : undefined}
+								rel={link.href.startsWith('http') ? "noopener noreferrer" : undefined}
+							>
+								{Icon && <Icon class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors" />}
+								{link.label}
+							</a>
+						</li>
+					);
+				})}
+			</ul>
+		</div>
 	</div>
-</div>
 </aside>
 
-<!-- Mobile Header -->
+<!-- Mobile Header (Visible on small screens) -->
 <div
 	class="lg:hidden flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/60 backdrop-blur-md sticky top-0 z-40 shadow-sm"
 >
@@ -192,7 +115,9 @@ function isActive(path: string) {
 		</a>
 	</div>
 	<div class="flex items-center gap-3 shrink-0">
-		<ThemePicker client:load />
+		<ErrorBoundary client:load>
+			<ThemePicker client:load />
+		</ErrorBoundary>
 		<button
 			id="mobile-menu-btn"
 			aria-label="Open menu"
@@ -227,54 +152,30 @@ function isActive(path: string) {
 		</button>
 	</div>
 </div>
-<!-- Mobile Drawer -->
+
+<!-- Mobile Drawer Navigation -->
 <div
 	id="mobile-drawer"
 	class="lg:hidden hidden border-b border-zinc-800 bg-zinc-900/95 backdrop-blur sticky top-[57px] z-30 px-4 py-3 flex flex-col gap-1"
 >
-	<a
-		href="/blog"
-		class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-300 hover:text-primary hover:bg-zinc-800/50 transition-colors group"
-	>
-		<PenTool
-			class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors shrink-0"
-		/>Blog
-	</a>
-	<a
-		href="/papers"
-		class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-300 hover:text-primary hover:bg-zinc-800/50 transition-colors group"
-	>
-		<BookOpen
-			class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors shrink-0"
-		/>Notes
-	</a>
-	<a
-		href="/certifications"
-		class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-300 hover:text-primary hover:bg-zinc-800/50 transition-colors group"
-	>
-		<Award
-			class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors shrink-0"
-		/>Certifications
-	</a>
-	<a
-		href="/goodies"
-		class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-300 hover:text-primary hover:bg-zinc-800/50 transition-colors group"
-	>
-		<Sparkles
-			class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors shrink-0"
-		/>Goodies
-	</a>
-	<a
-		href="/about"
-		class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-zinc-300 hover:text-primary hover:bg-zinc-800/50 transition-colors group"
-	>
-		<User
-			class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors shrink-0"
-		/>About Me
-	</a>
+	{NAV_LINKS.map((link) => {
+		const Icon = NavIcons[link.icon];
+		return (
+			<a
+				href={link.href}
+				class={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors group ${isActive(link.href) ? 'text-primary bg-zinc-800/30' : 'text-zinc-300 hover:text-primary hover:bg-zinc-800/50'}`}
+			>
+				{Icon && <Icon class="w-4 h-4 text-zinc-500 group-hover:text-primary transition-colors shrink-0" />}
+				{link.label}
+			</a>
+		);
+	})}
 </div>
 
 <script>
+	/**
+	 * Client-side script to handle mobile menu toggle.
+	 */
 	const btn = document.getElementById('mobile-menu-btn');
 	const drawer = document.getElementById('mobile-drawer');
 	const hamburgerIcon = document.getElementById('hamburger-icon');

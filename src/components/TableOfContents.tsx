@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface Heading {
   depth: number;
@@ -11,6 +11,10 @@ interface Props {
   isMobile?: boolean;
 }
 
+/**
+ * TableOfContents component renders a list of headings that highlights the current section
+ * as the user scrolls. It supports both desktop and mobile views.
+ */
 export default function TableOfContents({ headings, isMobile = false }: Props) {
   const [activeId, setActiveId] = useState<string>('');
   const [open, setOpen] = useState(false);

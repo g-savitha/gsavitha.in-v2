@@ -2,28 +2,16 @@
 import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
+import IconArrow from '../../components/IconArrow.astro';
 import { SITE_TITLE } from '../../consts';
-import {
-    Map,
-    Clipboard,
-    Palette,
-    Layers,
-    Sparkles,
-    ExternalLink,
-} from 'lucide-astro';
+import { sortByDate } from '../../utils/content';
+import * as Icons from 'lucide-astro';
 
-const goodies = (await getCollection('goodies')).sort(
-    (a, b) => (b.data.date?.valueOf() || 0) - (a.data.date?.valueOf() || 0),
-);
+const goodies = await getCollection('goodies');
+const sortedGoodies = sortByDate(goodies);
 
-// Icon map: maps icon string from content to lucide component
-const iconComponents: Record<string, any> = {
-    Map,
-    Clipboard,
-    Palette,
-    Layers,
-    Sparkles,
-};
+// Map icon names to Lucide components
+const GoodieIcons = Icons as any;
 ---
 
 <PageLayout
@@ -43,10 +31,10 @@ const iconComponents: Record<string, any> = {
 
     <ul class="flex flex-col max-w-2xl mx-auto divide-y divide-zinc-800/80">
         {
-            goodies.map((goodie) => {
+            sortedGoodies.map((goodie) => {
                 const IconComp = goodie.data.icon
-                    ? iconComponents[goodie.data.icon]
-                    : Sparkles;
+                    ? GoodieIcons[goodie.data.icon]
+                    : Icons.Sparkles;
                 return (
                     <li class="group">
                         <a
@@ -76,18 +64,7 @@ const iconComponents: Record<string, any> = {
                             </div>
 
                             {/* Arrow */}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-primary transition-colors"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <path d="M9 18l6-6-6-6" />
-                            </svg>
+                            <IconArrow class="w-4 h-4 shrink-0 text-zinc-600 group-hover:text-primary transition-colors" />
                         </a>
                     </li>
                 );

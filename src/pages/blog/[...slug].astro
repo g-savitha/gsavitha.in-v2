@@ -2,11 +2,11 @@
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
 
+import { filterDrafts, sortByDate, getRelatedPosts, getRecentPosts } from '../../utils/content';
+
 export async function getStaticPaths() {
-	const posts = await getCollection('blog', ({ data }) => import.meta.env.PROD ? data.draft !== true : true);
-	
-	// Sort posts by date descending
-	posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+	const allPosts = await getCollection('blog');
+	const posts = sortByDate(filterDrafts(allPosts));
 
 	return posts.map((post, index) => {
 		const nextPost = index > 0 ? posts[index - 1] : null;
@@ -28,31 +28,11 @@ type Props = {
 const { post, prevPost, nextPost } = Astro.props;
 const { Content, headings } = await render(post);
 
-const allPosts = await getCollection('blog', ({ data }) => import.meta.env.PROD ? data.draft !== true : true);
-const currentTags = post.data.tags || [];
-const currentCats = post.data.categories || [];
+const allPosts = await getCollection('blog');
+const filteredPosts = filterDrafts(allPosts);
 
-const related = allPosts
-	.filter(p => p.id !== post.id)
-	.map(p => {
-		let score = 0;
-		const pTags = p.data.tags || [];
-		const pCats = p.data.categories || [];
-		
-		// Hugo default weights
-		currentCats.forEach(c => { if(pCats.includes(c)) score += 100; });
-		currentTags.forEach(t => { if(pTags.includes(t)) score += 80; });
-		
-		return { post: p, score };
-	})
-	.filter(p => p.score > 0)
-	.sort((a, b) => b.score - a.score || b.post.data.date.valueOf() - a.post.data.date.valueOf())
-	.slice(0, 5)
-	.map(p => p.post);
-
-const recentPosts = related.length > 0 
-	? related 
-	: allPosts.filter(p => p.id !== post.id).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()).slice(0, 5);
+const related = getRelatedPosts(post, filteredPosts, 5);
+const recentPosts = related.length > 0 ? related : getRecentPosts(filteredPosts, post.id, 5);
 ---
 
 <BlogPost {...post.data} headings={headings} prevPost={prevPost} nextPost={nextPost} recentPosts={recentPosts}>

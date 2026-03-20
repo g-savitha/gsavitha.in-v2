@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content';
 import PageLayout from './PageLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import TableOfContents from '../components/TableOfContents.tsx';
+import ErrorBoundary from '../components/ErrorBoundary.tsx';
 
 type Props = CollectionEntry<'blog'>['data'] & { 
     headings?: any[];
@@ -80,11 +81,13 @@ const {
             {
                 headings.length > 0 && (
                     <div class="xl:hidden mb-10 border border-zinc-800/50 rounded-xl px-5 py-4 not-prose">
-                        <TableOfContents
-                            headings={headings}
-                            isMobile={true}
-                            client:media="(max-width: 1279px)"
-                        />
+                        <ErrorBoundary client:load>
+                            <TableOfContents
+                                headings={headings}
+                                isMobile={true}
+                                client:media="(max-width: 1279px)"
+                            />
+                        </ErrorBoundary>
                     </div>
                 )
             }
@@ -144,10 +147,12 @@ const {
         {
             headings.length > 0 && (
                 <aside class="hidden xl:block sticky top-24 shrink-0 -mt-2">
-                    <TableOfContents
-                        headings={headings}
-                        client:media="(min-width: 1280px)"
-                    />
+                    <ErrorBoundary client:load>
+                        <TableOfContents
+                            headings={headings}
+                            client:media="(min-width: 1280px)"
+                        />
+                    </ErrorBoundary>
                 </aside>
             )
         }
