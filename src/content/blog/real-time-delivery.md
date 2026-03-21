@@ -2,6 +2,7 @@
 title: "Behind the Scenes of Real Time Delivery Tracking System (Zomato-Inspired)"
 date: 2026-03-21T10:04:25.686Z
 draft: false
+heroImage: ../../assets/zomato-delivery.png
 tags: ["system design", "distributed systems", "message queues", "kafka", "sqs", "bullmq" ,"websockets", "producer-consumer pattern", "architecture"]
 categories: ["system design", "distributed systems", "architecture", "backend"]
 ---

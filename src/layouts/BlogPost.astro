@@ -19,13 +19,14 @@ const {
     updatedDate,
     headings = [],
     tags = [],
+    heroImage,
     prevPost = null,
     nextPost = null,
     recentPosts = [],
 } = Astro.props;
 ---
 
-<PageLayout title={title} description={description}>
+<PageLayout title={title} description={description} image={heroImage}>
     <div
         class="xl:grid xl:grid-cols-[1fr_260px] lg:gap-12 xl:gap-20 items-start"
     >

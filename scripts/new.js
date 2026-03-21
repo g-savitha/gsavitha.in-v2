@@ -29,6 +29,7 @@ const templates = {
 title: "${name.replace(/-/g, ' ')}"
 date: ${fullDate}
 draft: false
+heroImage: ""
 tags: []
 categories: []
 ---
