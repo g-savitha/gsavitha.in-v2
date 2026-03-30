@@ -54,11 +54,11 @@ This doesn't scale. And it definitely doesn't survive production.
 Kafka puts a pipeline in the middle. Producers drop events into it. Consumers read from it. Nobody talks to each other directly.
 ```mermaid
 flowchart LR
-    P[Order Service\nProducer] -->|publishes events| K[(Kafka)]
-    K --> C1[Inventory Service]
-    K --> C2[Email Service]
-    K --> C3[Fraud Detection]
-    K --> C4[Analytics]
+    P[Order Service\nProducer]:::success -->|publishes events| K[(Kafka)]:::primary
+    K --> C1[Inventory Service]:::info
+    K --> C2[Email Service]:::info
+    K --> C3[Fraud Detection]:::info
+    K --> C4[Analytics]:::info
 ```
 
 The order service fires an event and moves on. It doesn't know — or care — who picks it up. You can add a fifth consumer tomorrow without touching the order service at all.
@@ -84,14 +84,14 @@ Kafka organises events into **topics**. A topic is just a named channel — `ord
 Producers write to a topic. Consumers subscribe to a topic. Multiple consumers can read the same topic independently without interfering with each other.
 ```mermaid
 flowchart LR
-    OS[Order Service] -->|order placed| OT[[orders topic]]
-    OS -->|payment done| PT[[payments topic]]
+    OS[Order Service]:::success -->|order placed| OT[[orders topic]]:::accent
+    OS -->|payment done| PT[[payments topic]]:::accent
 
-    OT --> INV[Inventory Service]
-    OT --> EMAIL[Email Service]
+    OT --> INV[Inventory Service]:::info
+    OT --> EMAIL[Email Service]:::info
 
-    PT --> BILL[Billing Service]
-    PT --> FRAUD[Fraud Detection]
+    PT --> BILL[Billing Service]:::info
+    PT --> FRAUD[Fraud Detection]:::info
 ```
 
 Clean separation. Each topic is its own stream of events.
@@ -103,10 +103,10 @@ Clean separation. Each topic is its own stream of events.
 A single topic can receive millions of events per second. One machine can't handle that. So Kafka splits each topic into **partitions** — parallel lanes.
 ```mermaid
 flowchart TD
-    T[[orders topic]]
-    T --> P0[Partition 0\nevent 0 → event 1 → event 2]
-    T --> P1[Partition 1\nevent 0 → event 1 → event 2]
-    T --> P2[Partition 2\nevent 0 → event 1 → event 2]
+    T[[orders topic]]:::accent
+    T --> P0[Partition 0\nevent 0 → event 1 → event 2]:::secondary
+    T --> P1[Partition 1\nevent 0 → event 1 → event 2]:::secondary
+    T --> P2[Partition 2\nevent 0 → event 1 → event 2]:::secondary
 ```
 
 Each partition is an ordered, append-only log. Events within a partition are strictly ordered. Kafka distributes partitions across multiple servers (brokers), so no single machine is a bottleneck.
@@ -122,9 +122,9 @@ Each event in a partition gets a sequential number — its **offset**. Consumers
 One consumer reading a high-throughput topic won't keep up. Kafka lets you form a **consumer group** — multiple consumers splitting the partitions between them.
 ```mermaid
 flowchart LR
-    P0[Partition 0] --> A1[Consumer A1]
-    P1[Partition 1] --> A2[Consumer A2]
-    P2[Partition 2] --> A2
+    P0[Partition 0]:::secondary --> A1[Consumer A1]:::info
+    P1[Partition 1]:::secondary --> A2[Consumer A2]:::info
+    P2[Partition 2]:::secondary --> A2
 
     subgraph GroupA [Consumer Group A — Inventory]
         A1
@@ -139,12 +139,12 @@ Each partition is owned by exactly one consumer within the group. Add more consu
 Different consumer groups are completely independent:
 ```mermaid
 flowchart LR
-    T[[orders topic]]
+    T[[orders topic]]:::accent
 
-    T --> A1[Consumer A1]
-    T --> A2[Consumer A2]
-    T --> B1[Consumer B1]
-    T --> B2[Consumer B2]
+    T --> A1[Consumer A1]:::info
+    T --> A2[Consumer A2]:::info
+    T --> B1[Consumer B1]:::info
+    T --> B2[Consumer B2]:::info
 
     subgraph GroupA [Consumer Group A — Inventory]
         A1
@@ -182,9 +182,9 @@ This is why Kafka can comfortably handle millions of events per second on commod
 Every partition is replicated across multiple brokers. One broker is the **leader** — it handles all reads and writes for that partition. The others are **followers** — they replicate the leader's data continuously.
 ```mermaid
 flowchart LR
-    P[Partition 0\nLeader — Broker 1]
-    P -->|replicate| F1[Follower — Broker 2]
-    P -->|replicate| F2[Follower — Broker 3]
+    P[Partition 0\nLeader — Broker 1]:::success
+    P -->|replicate| F1[Follower — Broker 2]:::info
+    P -->|replicate| F2[Follower — Broker 3]:::info
 ```
 
 If the leader goes down, a follower is automatically elected. No data loss. No manual intervention. Kafka keeps going.
