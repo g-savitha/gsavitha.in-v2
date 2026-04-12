@@ -11,6 +11,8 @@ You open Cursor, start a conversation about a bug in your codebase, and thirty m
 
 This post traces the full architecture of context management: from the naive approach that breaks immediately, through the trade-offs of each fix, to the production-grade design that modern AI coding assistants use today.
 
+> **Note**: This architecture is inspired by AI chat tools like Cursor
+
 ---
 
 ## The Problem: LLMs Have No Memory
